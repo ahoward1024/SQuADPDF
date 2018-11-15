@@ -65,6 +65,7 @@ class App extends Component {
           onChange={this.handlePassageChange}
         >
         </textarea>
+        <br/>
         <input
           type="text"
           placeholder={this.state.question}
@@ -75,11 +76,18 @@ class App extends Component {
           onClick={this.sendData}
         > Submit
         </button>
+        <br/>
         <button
           type="button"
           onClick={this.getHealthCheck}
         > HC
         </button>
+        <button
+          type="button"
+          onClick={() => this.setState({'answer': ''})}
+        > Clear
+        </button>
+        <br/>
         {this.state.hc}
         <div>
           Answer: {this.state.answer}
