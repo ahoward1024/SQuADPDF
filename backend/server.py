@@ -5,7 +5,7 @@ from mc import handle_request
 
 
 app = Sanic()
-CORS(app)
+CORS(app, automatic_options=True)
 
 
 @app.route('/hc', methods=['GET', 'OPTIONS'])
