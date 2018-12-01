@@ -1,12 +1,30 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {render} from 'react-dom';
 import './index.css';
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import Reducer from './reducer';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// We set the initial state here instead of inside the reducer because then
+// the state will actually be initialized for first use by the App component.
+const initialState = {
+  file: null,
+  text: '',
+  question: '',
+  answer: '',
+  loading: false,
+  error: ''
+};
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
+export const store = createStore(Reducer, initialState);
+
+render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+
 serviceWorker.unregister();

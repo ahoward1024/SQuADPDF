@@ -1,0 +1,22 @@
+.heading {
+
+}
+
+.icon {
+  color: grey;
+  padding: 8px;
+}
+
+.drop-input {
+  display: block;
+  padding: 8px;
+}
+
+.question-input {
+  padding: 8px;
+  width: 45%;
+}
+
+.errorMessage {
+  color: red;
+}
