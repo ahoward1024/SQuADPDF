@@ -55,7 +55,7 @@ class PDFView extends React.Component {
 
   render() {
     return (
-      <div className="react-pdf-div">
+      <div>
         <button
           type="button"
           onClick={() => {

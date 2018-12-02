@@ -11,13 +11,23 @@ async function sendToServer(passage, question) {
     },
     'body': JSON.stringify({passage, question})
   })
-  .then(response => response.json())
+  .then(response => {
+    if(response.status !== 200) {
+      throw new Error(`${response.statusText}`);
+    }
+    return response.json()
+  })
   .then(json => {
     console.log(json);
     const answer = json.answer;
-    store.dispatch(setAnswer(answer));
     store.dispatch(setLoading(false));
+    store.dispatch(setAnswer(answer));
   })
+  .catch(error => {
+    store.dispatch(setLoading(false));
+    store.dispatch(setError('Server error!'));
+    console.log(error);
+  });
 }
 
 const handleQuestionChange = (event) => {
@@ -51,6 +61,7 @@ const handleSendQuestion = (event) => {
     } else {
       store.dispatch(setError(''));
       // TODO: send payload to server
+      store.dispatch(setAnswer(''));
       store.dispatch(setLoading(true));
       sendToServer(text, question);
     }
@@ -66,6 +77,7 @@ const QuestionBox = () => {
         placeholder="What can I help you find?"
         onChange={handleQuestionChange}
       />
+      &nbsp;
       <button
         type="button"
         onClick={handleSendQuestion}

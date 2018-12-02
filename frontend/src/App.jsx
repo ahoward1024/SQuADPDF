@@ -3,7 +3,7 @@ import UploadPage from './components/UploadPage';
 
 const App = () => {
   return (
-    <div align="center">
+    <div>
       <UploadPage />
     </div>
   );

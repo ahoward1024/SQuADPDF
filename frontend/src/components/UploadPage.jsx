@@ -16,29 +16,34 @@ const mapStateToProps = (state) => ({
 });
 
 const UploadPage = ({file, text, quesiton, answer, loading, error}) => {
-  const elements = [];
+  const load = [];
   if(loading) {
-    elements.push(<div className="loader" key="loading"></div>)
+    load.push(<div className="loader" key="loading"></div>)
   }
 
+  const ans = [];
   if(answer !== '') {
-    elements.push(<p key="answer">Answer: {answer}</p>);
+    ans.push(<p key="answer">Answer: {answer}</p>);
   }
 
-  if(file !== null && file !== undefined) {
-    elements.push(<PDFView key="pdfview" file={file}/>);
+  const pdf = [];
+  if(file !== null) {
+    pdf.push(<PDFView key="pdfview" file={file}/>);
   }
 
   return (
-    <div>
-      <div className="icon-div">
-        <h1>SQuADPDF</h1>
-        <i className="far fa-file-alt fa-6x icon"></i>
-        <FileSelector />
-        <QuestionBox />
-        <p className="errorMessage">{error}</p>
+    <div align="center">
+      <div>
+        <div className="icon-div">
+          <h1 className="heading">SQuADPDF</h1>
+          <FileSelector />
+          <QuestionBox />
+          <p className="errorMessage">{error}</p>
+        </div>
+        {load}
+        {ans}
       </div>
-      {elements}
+      {pdf}
     </div>
   )
 }

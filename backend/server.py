@@ -10,15 +10,12 @@ CORS(app, automatic_options=True)
 
 @app.route('/hc', methods=['GET', 'OPTIONS'])
 async def health_check(request):
-    # return json({'message': 'okay!'})
     return response.text('health check')
 
 
 @app.route('/data', methods=['POST', 'OPTIONS'])
 def data(request):
-    return response.json({
-        'message': 'Got data',
-        'answer': handle_request(request)})
+    return response.json({'answer': handle_request(request)})
 
 
 @app.route('/', methods=['GET', 'OPTIONS'])
