@@ -1,8 +1,6 @@
 import '../styles/PDF.css';
 import React from 'react';
 import {Document, Page, pdfjs} from 'react-pdf';
-import {setText} from '../actions';
-import {store} from '../index';
 // NOTE: We are able to load pdfjs directly from react-pdf and just use the
 // internal library it uses. Make absolutely sure you are using a version
 // of react-pdf that is 4.0 or higher. Currently 4.0 is in beta.
@@ -11,52 +9,43 @@ import {store} from '../index';
 // details about this.
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-class PDFView extends React.Component {
+class PDF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentPage: 1,
       numPages: 0,
+      text: ''
     }
 
+    this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
+    this.documentClick = this.documentClick.bind(this);
     this.getText = this.getText.bind(this);
   }
 
-  getText(file) {
-    // We must chain the promises that pdfjs will return in order to get all
-    // of the necessary data when loading the document
-    const url = URL.createObjectURL(file);
-    let pdf = pdfjs.getDocument(url);
-    return pdf.then((pdf) => {
-      let numPages = pdf.pdfInfo.numPages;
-      let countPromises = [];
-      for(let i = 1; i <= numPages; ++i) {
-        let page = pdf.getPage(i);
+  documentClick({pageNumber}) {
+    console.log("Clicked item from page: " + pageNumber);
+  }
 
-        countPromises.push(page.then((page) => {
-          let textContent = page.getTextContent({normalizeWhitespace: true});
-          return textContent.then((text) => {
-            return text.items.map((textString) => {
-              return textString.str;
-            }).join('');
-          });
-        }));
+  onDocumentLoadSuccess({numPages}) {
+    this.setState({numPages});
+  }
+
+  getText(items) {
+    console.log(items);
+    let text = this.state.text;
+    for(let i = 0; i < items.length; ++i) {
+      const str = items[i].str;
+      if(str !== '') {
+        text = text.concat(str + ' ');
       }
-      return Promise.all(countPromises).then((texts) => {
-        // Free the url as it is no longer needed
-        const text = texts.join('');
-        URL.revokeObjectURL(url);
-        store.dispatch(setText(text));
+    }
 
-        // This will free the PDF object
-        pdf.cleanup();
-        pdf.destroy();
-        return text;
-      });
-    });
+    this.setState({text});
   }
 
   render() {
+    console.log(this.state.text);
     return (
       <div>
         <button
@@ -80,18 +69,22 @@ class PDFView extends React.Component {
         </button>
         <Document
           file={this.props.file}
-          onLoadSuccess={({numPages}) => {
-            this.setState({numPages});
-            this.setState({text: this.getText(this.props.file)});
-          }}
+          onLoadSuccess={this.onDocumentLoadSuccess}
+          onItemClick={this.documentClick}
         >
-          <Page
-            pageNumber={this.state.currentPage}
-          />
+        {
+          Array.from(new Array(this.state.numPages), (element, index) => (
+            <Page
+              key={`page__${index + 1}`}
+              pageNumber={index + 1}
+              onGetTextSuccess={this.getText}
+            />
+          ))
+        }
         </Document>
       </div>
     );
   }
 }
 
-export default PDFView;
+export default PDF;

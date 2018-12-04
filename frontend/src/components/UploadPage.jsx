@@ -4,7 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import FileSelector from './FileSelector';
 import QuestionBox from './QuestionBox';
-import PDFView from './PDFView';
+import PDF from './PDF';
 
 const mapStateToProps = (state) => ({
   file: state.file,
@@ -28,8 +28,9 @@ const UploadPage = ({file, text, quesiton, answer, loading, error}) => {
 
   const pdf = [];
   if(file !== null) {
-    pdf.push(<PDFView key="pdfview" file={file}/>);
   }
+  file = './sample.pdf';
+  pdf.push(<PDF key="pdf" file={file}/>);
 
   return (
     <div align="center">
