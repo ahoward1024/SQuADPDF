@@ -26,28 +26,31 @@ class PDFView extends React.Component {
     // We must chain the promises that pdfjs will return in order to get all
     // of the necessary data when loading the document
     const url = URL.createObjectURL(file);
-    var pdf = pdfjs.getDocument(url);
+    let pdf = pdfjs.getDocument(url);
     return pdf.then((pdf) => {
-      var numPages = pdf.pdfInfo.numPages;
-      var countPromises = [];
-      for(var i = 1; i <= numPages; ++i) {
-        var page = pdf.getPage(i);
+      let numPages = pdf.pdfInfo.numPages;
+      let countPromises = [];
+      for(let i = 1; i <= numPages; ++i) {
+        let page = pdf.getPage(i);
 
         countPromises.push(page.then((page) => {
-          var textContent = page.getTextContent();
+          let textContent = page.getTextContent({normalizeWhitespace: true});
           return textContent.then((text) => {
-            return text.items.map((s) => {
-              return s.str;
+            return text.items.map((textString) => {
+              return textString.str;
             }).join('');
           });
         }));
       }
       return Promise.all(countPromises).then((texts) => {
-        pdf = null; // This will free the PDF object
         // Free the url as it is no longer needed
         const text = texts.join('');
         URL.revokeObjectURL(url);
         store.dispatch(setText(text));
+
+        // This will free the PDF object
+        pdf.cleanup();
+        pdf.destroy();
         return text;
       });
     });
