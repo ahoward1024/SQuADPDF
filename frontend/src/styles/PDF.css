@@ -4,3 +4,11 @@
   margin: 10px;
   box-shadow: 0 2px 4px 0 #CCCCCE,0 2px 8px 0 #B8B8BA;
 }
+
+.rotate-right {
+
+}
+
+.rotate-left {
+  transform: scale(-1, 1);
+}

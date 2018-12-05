@@ -12,6 +12,8 @@ const Reducer = (state, action) => {
       return {...state, answer: action.answer};
     case Actions.SET_LOADING:
       return {...state, loading: action.loading};
+    case Actions.SET_ROTATION:
+      return {...state, rotation: action.rotation};
     case Actions.SET_ERROR:
       return {...state, error: action.error}
     default:

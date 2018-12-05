@@ -4,6 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import FileSelector from './FileSelector';
 import QuestionBox from './QuestionBox';
+import PDFControls from './PDFControls';
 import PDF from './PDF';
 
 const mapStateToProps = (state) => ({
@@ -12,10 +13,13 @@ const mapStateToProps = (state) => ({
   question: state.question,
   answer: state.answer,
   loading: state.loading,
-  error: state.error
+  error: state.error,
+  rotation: state.rotation
 });
 
-const UploadPage = ({file, text, quesiton, answer, loading, error}) => {
+const UploadPage = ({
+  file, text, quesiton, answer, loading, error, rotation}) => {
+
   const load = [];
   if(loading) {
     load.push(<div className="loader" key="loading"></div>)
@@ -26,15 +30,16 @@ const UploadPage = ({file, text, quesiton, answer, loading, error}) => {
     ans.push(<p key="answer">Answer: {answer}</p>);
   }
 
+  const pdfcontrols = [];
   const pdf = [];
   if(file !== null) {
+    pdfcontrols.push(<PDFControls key="pdfcontrols"/>);
+    pdf.push(<PDF key="pdf" file={file} rotation={rotation}/>);
   }
-  file = './sample.pdf';
-  pdf.push(<PDF key="pdf" file={file}/>);
 
   return (
     <div align="center">
-      <div>
+      <div className="header">
         <div className="icon-div">
           <h1 className="heading">SQuADPDF</h1>
           <FileSelector />
@@ -43,8 +48,11 @@ const UploadPage = ({file, text, quesiton, answer, loading, error}) => {
         </div>
         {load}
         {ans}
+        {pdfcontrols}
       </div>
-      {pdf}
+      <div className="pdfcontent">
+        {pdf}
+      </div>
     </div>
   )
 }

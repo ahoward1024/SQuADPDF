@@ -15,6 +15,7 @@ const initialState = {
   question: '',
   answer: '',
   loading: false,
+  rotation: 0,
   error: ''
 };
 

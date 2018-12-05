@@ -1,5 +1,7 @@
 import '../styles/PDF.css';
 import React from 'react';
+import {store} from '../index';
+import {setText} from '../actions';
 import {Document, Page, pdfjs} from 'react-pdf';
 // NOTE: We are able to load pdfjs directly from react-pdf and just use the
 // internal library it uses. Make absolutely sure you are using a version
@@ -13,64 +15,41 @@ class PDF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 1,
       numPages: 0,
       text: ''
     }
 
     this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
-    this.documentClick = this.documentClick.bind(this);
     this.getText = this.getText.bind(this);
-  }
-
-  documentClick({pageNumber}) {
-    console.log("Clicked item from page: " + pageNumber);
   }
 
   onDocumentLoadSuccess({numPages}) {
     this.setState({numPages});
   }
 
+  // NOTE: FIXME: We need a better way of getting all of the Page
+  // elements first and then getting all of the text.
+  // Should we just send the file to the server and have the server
+  // scrape the text instead??
   getText(items) {
-    console.log(items);
     let text = this.state.text;
     for(let i = 0; i < items.length; ++i) {
       const str = items[i].str;
       if(str !== '') {
-        text = text.concat(str + ' ');
+        text = text.concat(str + '');
       }
     }
 
-    this.setState({text});
+    store.dispatch(setText(text));
   }
 
   render() {
-    console.log(this.state.text);
     return (
       <div>
-        <button
-          type="button"
-          onClick={() => {
-            if(this.state.currentPage > 1) {
-              this.setState({'currentPage': this.state.currentPage - 1})}
-            }
-          }
-        > Previous
-        </button>
-        &nbsp;{this.state.currentPage} / {this.state.numPages}&nbsp;
-        <button
-          type="button"
-          onClick={() => {
-            if(this.state.currentPage < this.state.numPages) {
-              this.setState({'currentPage': this.state.currentPage + 1})}
-            }
-          }
-        > Next
-        </button>
         <Document
           file={this.props.file}
           onLoadSuccess={this.onDocumentLoadSuccess}
-          onItemClick={this.documentClick}
+          rotate={this.props.rotation}
         >
         {
           Array.from(new Array(this.state.numPages), (element, index) => (
