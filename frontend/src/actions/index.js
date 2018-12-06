@@ -8,6 +8,11 @@ export const setText = text => ({
   text
 });
 
+export const appendText = text => ({
+  type: Actions.APPEND_TEXT,
+  text
+});
+
 export const setQuestion = question => ({
   type: Actions.SET_QUESTION,
   question
@@ -36,6 +41,7 @@ export const setError = error => ({
 export const Actions = Object.freeze({
   SET_FILE: 'SET_FILE',
   SET_TEXT: 'SET_TEXT',
+  APPEND_TEXT: 'APPEND_TEXT',
   SET_QUESTION: 'SET_QUESTION',
   SET_ANSWER: 'SET_ANSWER',
   SET_LOADING: 'SET_LOADING',

@@ -6,6 +6,9 @@ const Reducer = (state, action) => {
       return {...state, file: action.file};
     case Actions.SET_TEXT:
       return {...state, text: action.text};
+    case Actions.APPEND_TEXT:
+      let newText = state.text.concat(action.text);
+      return {...state, text: newText}
     case Actions.SET_QUESTION:
       return {...state, question: action.question};
     case Actions.SET_ANSWER:

@@ -2,14 +2,14 @@ import React from 'react';
 import {setQuestion, setAnswer, setLoading, setError} from '../actions';
 import {store} from '../index';
 
-async function sendToServer(passage, question) {
+async function sendToServer(text, question, file) {
+  let formData = new FormData();
+  formData.append('question', question);
+  formData.append('text', text);
+  formData.append('file', file);
   fetch('http://localhost:8000/data', {
     'method': 'POST',
-    'headers': {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    'body': JSON.stringify({passage, question})
+    'body': formData
   })
   .then(response => {
     if(response.status !== 200) {
@@ -59,11 +59,17 @@ const handleSendQuestion = (event) => {
       store.dispatch(setError(message));
       console.log(message);
     } else {
-      store.dispatch(setError(''));
-      // TODO: send payload to server
-      store.dispatch(setAnswer(''));
-      store.dispatch(setLoading(true));
-      sendToServer(text, question);
+      const file = store.getState().file;
+      if(file === null) {
+        const message = 'Error: No file selected. Please select a file.';
+        store.dispatch(setError(message));
+        console.log(message);
+      } else {
+        store.dispatch(setError(''));
+        store.dispatch(setAnswer(''));
+        store.dispatch(setLoading(true));
+        sendToServer(text, question, file);
+      }
     }
   }
 }

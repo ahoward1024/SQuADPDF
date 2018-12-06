@@ -1,7 +1,7 @@
 import '../styles/PDF.css';
 import React from 'react';
 import {store} from '../index';
-import {setText} from '../actions';
+import {appendText} from '../actions';
 import {Document, Page, pdfjs} from 'react-pdf';
 // NOTE: We are able to load pdfjs directly from react-pdf and just use the
 // internal library it uses. Make absolutely sure you are using a version
@@ -14,10 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 class PDF extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      numPages: 0,
-      text: ''
-    }
+    this.state = {numPages: 0, pages: []}
 
     this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
     this.getText = this.getText.bind(this);
@@ -25,22 +22,24 @@ class PDF extends React.Component {
 
   onDocumentLoadSuccess({numPages}) {
     this.setState({numPages});
+    const pages = Array.from(new Array(numPages), (element, index) => (
+      <Page
+        key={`page__${index + 1}`}
+        pageNumber={index + 1}
+        onGetTextSuccess={this.getText}
+      />
+    ));
+    this.setState({pages});
   }
 
-  // NOTE: FIXME: We need a better way of getting all of the Page
-  // elements first and then getting all of the text.
-  // Should we just send the file to the server and have the server
-  // scrape the text instead??
   getText(items) {
-    let text = this.state.text;
+    let text = '';
     for(let i = 0; i < items.length; ++i) {
-      const str = items[i].str;
-      if(str !== '') {
-        text = text.concat(str + '');
-      }
+      let str = items[i].str;
+      text = text.concat(str);
     }
 
-    store.dispatch(setText(text));
+    store.dispatch(appendText(text));
   }
 
   render() {
@@ -51,15 +50,7 @@ class PDF extends React.Component {
           onLoadSuccess={this.onDocumentLoadSuccess}
           rotate={this.props.rotation}
         >
-        {
-          Array.from(new Array(this.state.numPages), (element, index) => (
-            <Page
-              key={`page__${index + 1}`}
-              pageNumber={index + 1}
-              onGetTextSuccess={this.getText}
-            />
-          ))
-        }
+        {this.state.pages}
         </Document>
       </div>
     );

@@ -9,7 +9,6 @@ import PDF from './PDF';
 
 const mapStateToProps = (state) => ({
   file: state.file,
-  text: state.text,
   question: state.question,
   answer: state.answer,
   loading: state.loading,
